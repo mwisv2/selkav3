@@ -22,6 +22,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - video.mp4 (your video file)
      */
-    "/((?!_next/static|_next/image|favicon.ico|video.mp4).*)",
+    "/((?!_next/static|_next/image|favicon.ico|FPV Drone Flight through Beautiful Iceland Canyon.mp4).*)",
   ],
 }

@@ -22,7 +22,7 @@ export default function Home() {
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="relative w-full h-full">
           <video
-            src="/video.mp4"
+            src="/FPV Drone Flight through Beautiful Iceland Canyon.mp4"
             className="absolute w-full h-full object-cover"
             autoPlay
             loop
