@@ -1,27 +1,28 @@
+// middleware.ts
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  
-  // Only allow access to the home page and essential static resources
+
+  // 1) Always allow Next.js internals & your static files
+  if (
+    pathname.startsWith("/_next/") ||      // next-internal JS/CSS/images
+    pathname.startsWith("/api/")   ||      // your API routes
+    pathname.match(/\.[^\/]+$/)             // any “.ext” at end (jpg, mp4, css…)
+  ) {
+    return NextResponse.next()
+  }
+
+  // 2) Only your homepage is guarded
   if (pathname !== "/") {
-    // Redirect all other pages to home
     return NextResponse.redirect(new URL("/", request.url))
   }
 
   return NextResponse.next()
 }
 
+// apply to every path
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - video.mp4 (your video file)
-     */
-    "/((?!_next/static|_next/image|favicon.ico|FPV%20Drone%20Flight%20through%20Beautiful%20Iceland%20Canyon.mp4).*)",
-  ],
+  matcher: "/:path*",
 }
