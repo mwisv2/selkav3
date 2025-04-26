@@ -22,13 +22,14 @@ export default function Home() {
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="relative w-full h-full">
           <video
-            src="https://raw.githubusercontent.com/mwisv2/selkav3/refs/heads/main/public/video.mp4"
+            src="/video.mp4"
             className="absolute w-full h-full object-cover"
             autoPlay
             loop
             muted
             playsInline
           />
+          
         </div>
         <div className="absolute inset-0 bg-black/70 z-10" />
       </div>
