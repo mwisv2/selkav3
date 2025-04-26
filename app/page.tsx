@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { generateHWID } from "@/lib/hwid"
 import { motion } from "framer-motion"
+import { LockIcon } from "lucide-react"
+import Link from "next/link"
 
 export default function Home() {
   const router = useRouter()
@@ -15,44 +15,20 @@ export default function Home() {
   useEffect(() => {
     // Set loaded state for animations
     setLoaded(true)
-
-    const checkAuth = async () => {
-      // Check if user is already authenticated
-      const isAuthenticated = document.cookie.includes("selkaUserAuthenticated=true")
-      const licenseData = localStorage.getItem("selkaLicense")
-
-      if (isAuthenticated && licenseData) {
-        try {
-          // Verify HWID matches current device
-          const parsedLicense = JSON.parse(licenseData)
-          const currentHWID = await generateHWID()
-
-          if (parsedLicense.hwid === currentHWID) {
-            // HWID matches, redirect to dashboard
-            router.push("/dashboard")
-          }
-        } catch (e) {
-          console.error("Error parsing license data", e)
-        }
-      }
-    }
-
-    checkAuth()
-  }, [router])
+  }, [])
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-      {/* Video Background using iframe for YouTube */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="relative w-full h-full">
-          <iframe
-            src="https://www.youtube.com/embed/kcfs1-ryKWE?autoplay=1&controls=0&showinfo=0&rel=0&loop=1&mute=1&playlist=kcfs1-ryKWE&enablejsapi=1"
-            className="absolute w-[300%] h-[300%] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title="FPV Drone Flight through Beautiful Iceland Canyon"
-          ></iframe>
+          <video
+            src="https://raw.githubusercontent.com/mwisv2/selkav3/refs/heads/main/video"
+            className="absolute w-full h-full object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
         </div>
         <div className="absolute inset-0 bg-black/70 z-10" />
       </div>
@@ -66,7 +42,18 @@ export default function Home() {
           className="text-center"
         >
           <h1 className="text-5xl sm:text-6xl font-bold mb-4 text-white">Selka</h1>
-          <p className="text-xl text-gray-300 mb-8">Your AI-powered fitness journey</p>
+          <p className="text-xl text-gray-300 mb-2">Your AI-powered fitness journey</p>
+          
+          {/* Lock status message */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={loaded ? { opacity: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="flex items-center justify-center gap-2 mb-6 bg-red-900/30 py-2 px-4 rounded-md border border-red-500/50"
+          >
+            <LockIcon size={18} className="text-red-400" />
+            <p className="text-red-200 font-medium">Site access is currently locked</p>
+          </motion.div>
 
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
             <motion.div
@@ -74,14 +61,14 @@ export default function Home() {
               animate={loaded ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <Link href="/login">
-                <Button
-                  size="lg"
-                  className="w-full sm:w-auto min-w-[120px] bg-primary hover:bg-primary/90 transition-all"
-                >
-                  Login
-                </Button>
-              </Link>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto min-w-[120px] bg-gray-700/50 cursor-not-allowed opacity-50 hover:bg-gray-700/50"
+                disabled
+              >
+                <LockIcon size={16} className="mr-2" />
+                Login
+              </Button>
             </motion.div>
 
             <motion.div
@@ -89,17 +76,26 @@ export default function Home() {
               animate={loaded ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              <Link href="/onboarding/step-1">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full sm:w-auto min-w-[120px] border-white text-white hover:bg-white/10 transition-all"
-                >
-                  Sign Up
-                </Button>
-              </Link>
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto min-w-[120px] border-gray-600 text-gray-400 cursor-not-allowed opacity-50 hover:bg-transparent"
+                disabled
+              >
+                <LockIcon size={16} className="mr-2" />
+                Sign Up
+              </Button>
             </motion.div>
           </div>
+          
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={loaded ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="text-gray-400 max-w-md mx-auto text-sm"
+          >
+            Access to Selka is temporarily restricted. The platform will be available soon. For <Link href="https://selka-info.vercel.app" className="text-blue-400 hover:underline">info on Selka</Link>, visit our information site.
+          </motion.div>
         </motion.div>
 
         <motion.div
