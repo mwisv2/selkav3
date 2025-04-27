@@ -34,8 +34,10 @@ export default function AdminLoginPage() {
         throw new Error(data.message || "Authentication failed")
       }
   
+      // Set the admin authentication cookie on success
+      document.cookie = "adminAuthenticated=true; path=/; max-age=86400"  // Cookie expires in 1 day
+  
       setSuccess(true)
-      localStorage.setItem("adminAuthenticated", "true")
   
       setTimeout(() => {
         router.push("/step-1")
@@ -47,8 +49,6 @@ export default function AdminLoginPage() {
       setIsLoading(false)
     }
   }
-  
-  
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">

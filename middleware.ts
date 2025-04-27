@@ -13,29 +13,21 @@ export function middleware(request: NextRequest) {
   ) {
     return NextResponse.next()
   }
-  
-  // Check for admin authentication in browser storage
-  // Note: This is a client-side check, we need to implement a server-side version
-  // of this check by using a cookie instead
+
+  // Check for admin authentication in cookies
   const adminCookie = request.cookies.get("adminAuthenticated")
   
-  // If the admin cookie is present, allow access to all parts of the site
-  if (adminCookie && adminCookie.value === "true") {
+  // If the admin cookie is present and set to "true", allow access to the site
+  if (adminCookie && adminCookie === "true") {
     return NextResponse.next()
   }
-  
-  // Otherwise, redirect to home page
-  return NextResponse.redirect(new URL("/", request.url))
+
+  // Redirect to the login page if not authenticated
+  return NextResponse.redirect(new URL("/admin", request.url))
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 }
