@@ -18,7 +18,7 @@ export function middleware(request: NextRequest) {
   const adminCookie = request.cookies.get("adminAuthenticated")
   
   // If the admin cookie is present and set to "true", allow access to the site
-  if (adminCookie && adminCookie === "true") {
+  if (adminCookie && adminCookie.value === "true") {
     return NextResponse.next()
   }
 
