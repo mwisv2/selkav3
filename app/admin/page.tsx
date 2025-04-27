@@ -20,23 +20,25 @@ export default function AdminLoginPage() {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
-
+  
     try {
       const res = await fetch("/api/admin-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
       })
-
+  
       const data = await res.json()
-
+      
+      console.log("Response data:", data)  // Debug log
+      
       if (!res.ok) {
-        throw new Error(data.error || "Authentication failed")
+        throw new Error(data.message || "Authentication failed")  // Use data.message for error feedback
       }
-
+  
       setSuccess(true)
       localStorage.setItem("adminAuthenticated", "true")
-
+  
       setTimeout(() => {
         router.push("/step-1")
       }, 1000)
