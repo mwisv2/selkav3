@@ -39,7 +39,7 @@ export default function Home() {
               loop
               playsInline
             >
-              <source src="/videos/fpv-drone-iceland.mp4" type="video/mp4" />
+              <source src="/fpv-drone-iceland.mp4" type="video/mp4" />
             </video>
           </div>
         </div>
