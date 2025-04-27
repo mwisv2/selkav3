@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
   if (
     pathname === "/" || 
     pathname === "/fpv-drone-iceland.mp4" || 
-    pathname === "/admin"
+    pathname === "/admin" ||
     pathname === "/api/admin-login"
   ) {
     return NextResponse.next()
