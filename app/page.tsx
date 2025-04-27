@@ -20,16 +20,24 @@ export default function Home() {
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="relative w-full h-full">
-          {/* YouTube iframe with enhanced settings */}
-          <iframe
-            className="absolute w-full h-full object-cover"
-            src="https://www.youtube.com/embed/kcfs1-ryKWE?autoplay=1&mute=1&loop=1&playlist=kcfs1-ryKWE&controls=0&modestbranding=1&rel=0&fs=0&iv_load_policy=3&showinfo=0&disablekb=1"
-            title="FPV Drone Iceland"
-            frameBorder="0"
-            allow="autoplay; fullscreen"
-            allowFullScreen
-          />
+        <div className="relative w-full h-full overflow-hidden">
+          {/* YouTube iframe with enhanced settings and improved styling */}
+          <div className="absolute w-full h-full scale-125">
+            <iframe
+              className="absolute w-full h-full object-cover"
+              style={{
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                pointerEvents: 'none'
+              }}
+              src="https://www.youtube.com/embed/kcfs1-ryKWE?autoplay=1&mute=1&loop=1&playlist=kcfs1-ryKWE&controls=0&modestbranding=1&rel=0&fs=0&iv_load_policy=3&showinfo=0&disablekb=1"
+              title="FPV Drone Iceland"
+              frameBorder="0"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+            />
+          </div>
         </div>
         <div className="absolute inset-0 bg-black/70 z-10" />
       </div>
