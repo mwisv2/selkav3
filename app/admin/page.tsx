@@ -39,9 +39,10 @@ export default function AdminLoginPage() {
   
       setSuccess(true)
   
+      // Wait for a brief period to show success message before redirecting
       setTimeout(() => {
         router.push("/step-1")
-      }, 1000)
+      }, 1500)  // Adjust the delay if necessary
     } catch (err: any) {
       setError(err.message || "Authentication failed")
       console.error("Login error:", err)
