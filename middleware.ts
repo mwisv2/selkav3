@@ -9,6 +9,7 @@ export function middleware(request: NextRequest) {
     pathname === "/" || 
     pathname === "/fpv-drone-iceland.mp4" || 
     pathname === "/admin"
+    pathname === "/api/admin-login"
   ) {
     return NextResponse.next()
   }
