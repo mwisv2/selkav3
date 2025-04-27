@@ -11,34 +11,52 @@ import Link from "next/link"
 export default function Home() {
   const router = useRouter()
   const [loaded, setLoaded] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     // Set loaded state for animations
     setLoaded(true)
+    
+    // Check if device is mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="relative w-full h-full overflow-hidden">
-          {/* YouTube iframe with enhanced settings and improved styling */}
-          <div className="absolute w-full h-full scale-125">
-            <iframe
-              className="absolute w-full h-full object-cover"
-              style={{
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                pointerEvents: 'none'
-              }}
-              src="https://www.youtube.com/embed/kcfs1-ryKWE?autoplay=1&mute=1&loop=1&playlist=kcfs1-ryKWE&controls=0&modestbranding=1&rel=0&fs=0&iv_load_policy=3&showinfo=0&disablekb=1"
-              title="FPV Drone Iceland"
-              frameBorder="0"
-              allow="autoplay; fullscreen"
-              allowFullScreen
-            />
+        {/* Background gradient fallback that always shows */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black"></div>
+        
+        {/* Video background - only shown on desktop */}
+        {!isMobile && (
+          <div className="relative w-full h-full overflow-hidden">
+            <div className="absolute w-full h-full scale-125">
+              <iframe
+                className="absolute w-full h-full object-cover"
+                style={{
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  pointerEvents: 'none'
+                }}
+                src="https://www.youtube.com/embed/kcfs1-ryKWE?autoplay=1&mute=1&loop=1&playlist=kcfs1-ryKWE&controls=0&modestbranding=1&rel=0&fs=0&iv_load_policy=3&showinfo=0&disablekb=1"
+                title="FPV Drone Iceland"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
           </div>
-        </div>
+        )}
+        
+        {/* Overlay on top of background */}
         <div className="absolute inset-0 bg-black/70 z-10" />
       </div>
 
