@@ -28,12 +28,18 @@ export default function AdminLoginPage() {
         body: JSON.stringify({ password }),
       })
   
-      const data = await res.json()
-      
-      console.log("Response data:", data)  // Debug log
-      
+      const text = await res.text()  // Read response as text first
+      console.log("Response text:", text)  // Debug log
+  
+      let data;
+      try {
+        data = JSON.parse(text)  // Attempt to parse text as JSON
+      } catch (err) {
+        throw new Error("Invalid JSON response")
+      }
+  
       if (!res.ok) {
-        throw new Error(data.message || "Authentication failed")  // Use data.message for error feedback
+        throw new Error(data.message || "Authentication failed")
       }
   
       setSuccess(true)
@@ -49,6 +55,7 @@ export default function AdminLoginPage() {
       setIsLoading(false)
     }
   }
+  
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
