@@ -7,7 +7,10 @@ export async function POST(request: Request) {
     if (!password) {
       return new NextResponse(
         JSON.stringify({ success: false, message: "Password is required" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
       )
     }
 
@@ -16,25 +19,39 @@ export async function POST(request: Request) {
     if (!ADMIN_PASSWORD) {
       return new NextResponse(
         JSON.stringify({ success: false, message: "Server misconfiguration" }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
       )
     }
 
     if (password === ADMIN_PASSWORD) {
       return new NextResponse(
         JSON.stringify({ success: true }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }
       )
     } else {
       return new NextResponse(
         JSON.stringify({ success: false, message: "Invalid password" }),
-        { status: 401, headers: { "Content-Type": "application/json" } }
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
       )
     }
   } catch (error) {
+    console.error("Error in authentication:", error)
+
     return new NextResponse(
       JSON.stringify({ success: false, message: "Server error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
     )
   }
 }

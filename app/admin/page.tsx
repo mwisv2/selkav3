@@ -28,15 +28,7 @@ export default function AdminLoginPage() {
         body: JSON.stringify({ password }),
       })
   
-      const text = await res.text()  // Read response as text first
-      console.log("Response text:", text)  // Debug log
-  
-      let data;
-      try {
-        data = JSON.parse(text)  // Attempt to parse text as JSON
-      } catch (err) {
-        throw new Error("Invalid JSON response")
-      }
+      const data = await res.json()
   
       if (!res.ok) {
         throw new Error(data.message || "Authentication failed")
@@ -55,6 +47,7 @@ export default function AdminLoginPage() {
       setIsLoading(false)
     }
   }
+  
   
 
   return (
