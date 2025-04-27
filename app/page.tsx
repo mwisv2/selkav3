@@ -23,7 +23,7 @@ export default function Home() {
         <div className="relative w-full h-full">
           <iframe
             className="absolute w-full h-full object-cover"
-            src="https://www.youtube.com/embed/kcfs1-ryKWE?autoplay=1&mute=1&loop=1&playlist=kcfs1-ryKWE" // YouTube video with autoplay, mute, and loop
+            src="https://www.youtube.com/embed/kcfs1-ryKWE?autoplay=1&mute=1&loop=1&playlist=kcfs1-ryKWE&controls=0&modestbranding=1&rel=0"
             title="FPV Drone Iceland"
             frameBorder="0"
             allow="autoplay; fullscreen"
