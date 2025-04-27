@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -22,14 +20,20 @@ export default function Home() {
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="relative w-full h-full">
           <video
-            src="/fpv-drone-iceland.mp4"
-            className="absolute w-full h-full object-cover"
             autoPlay
             loop
             muted
             playsInline
-          />
-          
+            preload="auto"
+            poster="/fallback-image.jpg" // Fallback image for mobile or slow loading
+            className="absolute w-full h-full object-cover"
+          >
+            {/* Multiple video formats for better compatibility */}
+            <source src="/fpv-drone-iceland.mp4" type="video/mp4" />
+            <source src="/fpv-drone-iceland.webm" type="video/webm" />
+            <source src="/fpv-drone-iceland.ogv" type="video/ogg" />
+            Your browser does not support the video tag.
+          </video>
         </div>
         <div className="absolute inset-0 bg-black/70 z-10" />
       </div>
