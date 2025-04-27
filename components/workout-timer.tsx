@@ -8,12 +8,14 @@ import { Play, Pause, RotateCcw } from "lucide-react"
 interface WorkoutTimerProps {
   onTimeUpdate: (seconds: number) => void
   isCompleted?: boolean
+  autoStart?: boolean
 }
 
-export function WorkoutTimer({ onTimeUpdate, isCompleted = false }: WorkoutTimerProps) {
+export function WorkoutTimer({ onTimeUpdate, isCompleted = false, autoStart = true }: WorkoutTimerProps) {
   const [seconds, setSeconds] = useState(0)
   const [isActive, setIsActive] = useState(false)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const initializedRef = useRef(false)
 
   // Format seconds to MM:SS
   const formatTime = (totalSeconds: number) => {
@@ -55,9 +57,10 @@ export function WorkoutTimer({ onTimeUpdate, isCompleted = false }: WorkoutTimer
     }
   }, [isActive, isCompleted, onTimeUpdate])
 
-  // Auto-start timer when component mounts
+  // Auto-start timer when component mounts, but only once
   useEffect(() => {
-    if (!isCompleted) {
+    if (autoStart && !isCompleted && !initializedRef.current) {
+      initializedRef.current = true
       setIsActive(true)
     }
 
@@ -66,7 +69,7 @@ export function WorkoutTimer({ onTimeUpdate, isCompleted = false }: WorkoutTimer
         clearInterval(intervalRef.current)
       }
     }
-  }, [isCompleted])
+  }, [autoStart, isCompleted])
 
   return (
     <Card className="mb-4">

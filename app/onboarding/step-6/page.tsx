@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -8,26 +8,71 @@ import { Progress } from "@/components/ui/progress"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Clock, Info } from "lucide-react"
+import { syncUserData } from "@/lib/dataSync"
 
 export default function Step6() {
   const router = useRouter()
   const [timePerDay, setTimePerDay] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
 
-  const handleNext = () => {
-    // Save to localStorage for demo purposes
-    const userProfile = JSON.parse(localStorage.getItem("userProfile") || "{}")
-    localStorage.setItem(
-      "userProfile",
-      JSON.stringify({
+  // Load saved data when component mounts
+  useEffect(() => {
+    try {
+      const userProfile = JSON.parse(localStorage.getItem("userProfile") || "{}")
+      if (userProfile.minsPerDay) {
+        setTimePerDay(userProfile.minsPerDay.toString())
+      }
+    } catch (error) {
+      console.error("Error loading saved data:", error)
+    }
+  }, [])
+
+  const handleNext = async () => {
+    if (!timePerDay) return
+
+    setIsSaving(true)
+    try {
+      // Save to localStorage
+      const userProfile = JSON.parse(localStorage.getItem("userProfile") || "{}")
+      const updatedProfile = {
         ...userProfile,
         minsPerDay: timePerDay,
-      }),
-    )
-    router.push("/onboarding/step-7")
+      }
+
+      localStorage.setItem("userProfile", JSON.stringify(updatedProfile))
+
+      // Save to server
+      await syncUserData({
+        userProfile: updatedProfile,
+        workoutData: JSON.parse(localStorage.getItem("workoutData") || "{}"),
+      })
+
+      // Mark step as completed
+      const workoutData = JSON.parse(localStorage.getItem("workoutData") || "{}")
+      const updatedWorkoutData = {
+        ...workoutData,
+        step6Completed: true,
+        // Also mark step7 as completed to skip it
+        step7Completed: true,
+      }
+      localStorage.setItem("workoutData", JSON.stringify(updatedWorkoutData))
+
+      // Update cookie
+      document.cookie = `licenseData=${JSON.stringify({
+        workoutData: updatedWorkoutData,
+      })}; path=/; max-age=31536000`
+
+      // Skip step-7 and go directly to step-8
+      router.push("/onboarding/step-8")
+    } catch (error) {
+      console.error("Error saving data:", error)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
-  // Calculate the total number of steps (now 13 with the new steps)
-  const totalSteps = 13
+  // Calculate the total number of steps (now 12 with step-7 removed)
+  const totalSteps = 12
   const currentStep = 6
   const progressPercentage = (currentStep / totalSteps) * 100
 
@@ -93,8 +138,15 @@ export default function Step6() {
         <Button variant="outline" onClick={() => router.push("/onboarding/step-5")}>
           Back
         </Button>
-        <Button onClick={handleNext} disabled={!timePerDay}>
-          Next
+        <Button onClick={handleNext} disabled={!timePerDay || isSaving}>
+          {isSaving ? (
+            <>
+              <span className="mr-2">Saving...</span>
+              <div className="animate-spin h-4 w-4 border-2 border-background border-t-transparent rounded-full"></div>
+            </>
+          ) : (
+            "Next"
+          )}
         </Button>
       </CardFooter>
     </Card>

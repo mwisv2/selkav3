@@ -10,23 +10,51 @@ import { useEffect, useState } from "react"
 export default function WorkoutsPage() {
   const [weeklyWorkouts, setWeeklyWorkouts] = useState<any[]>([])
 
+  // Modify the useEffect hook to ensure weeklyWorkouts is always an array
   useEffect(() => {
     // Load user profile from localStorage
     const profile = localStorage.getItem("userProfile")
     if (profile) {
-      const userProfile = JSON.parse(profile)
+      try {
+        const userProfile = JSON.parse(profile)
 
-      // Generate workouts based on user profile
-      const workouts = generateWorkouts(userProfile)
+        // Check if we already have generated workouts in localStorage
+        const storedWorkouts = localStorage.getItem("generatedWorkouts")
+        if (storedWorkouts) {
+          try {
+            const parsedWorkouts = JSON.parse(storedWorkouts)
+            if (Array.isArray(parsedWorkouts) && parsedWorkouts.length > 0) {
+              setWeeklyWorkouts(parsedWorkouts)
+              return
+            }
+          } catch (e) {
+            console.error("Error parsing stored workouts:", e)
+            setWeeklyWorkouts([])
+          }
+        }
 
-      // Get workouts with sets for more detailed information
-      // const workoutsWithSets = getWorkoutsWithSets(workouts, userProfile);
+        try {
+          // Generate workouts based on user profile
+          const workouts = generateWorkouts(userProfile)
 
-      // But we only need the basic workout info for this page
-      setWeeklyWorkouts(workouts)
+          // Save the generated workouts to localStorage
+          localStorage.setItem("generatedWorkouts", JSON.stringify(workouts))
+
+          setWeeklyWorkouts(workouts || [])
+        } catch (e) {
+          console.error("Error generating workouts:", e)
+          setWeeklyWorkouts([])
+        }
+      } catch (e) {
+        console.error("Error parsing user profile:", e)
+        setWeeklyWorkouts([])
+      }
+    } else {
+      setWeeklyWorkouts([])
     }
   }, [])
 
+  // Update the JSX to check if weeklyWorkouts is defined and not empty
   return (
     <div className="space-y-6">
       <div>
@@ -41,18 +69,26 @@ export default function WorkoutsPage() {
           <TabsTrigger value="history">History</TabsTrigger>
         </TabsList>
         <TabsContent value="weekly" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {weeklyWorkouts.map((workout, index) => (
-              <WorkoutCard
-                key={index}
-                title={workout.title}
-                description={workout.description}
-                day={workout.day}
-                duration={workout.duration}
-                exercises={workout.exercises}
-              />
-            ))}
-          </div>
+          {weeklyWorkouts && weeklyWorkouts.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {weeklyWorkouts.map((workout, index) => (
+                <WorkoutCard
+                  key={index}
+                  workout={workout}
+                  isToday={workout && workout.day === new Date().toLocaleDateString("en-US", { weekday: "long" })}
+                />
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+                <p className="mb-4 text-muted-foreground">No workouts available yet.</p>
+                <p className="text-sm text-muted-foreground">
+                  Complete your profile to generate personalized workouts.
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
         <TabsContent value="exercises">
           <Card>

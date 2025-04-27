@@ -1,28 +1,40 @@
-// middleware.ts
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-
-  // 1) Always allow Next.js internals & your static files
+  
+  // Allow access to specified paths without authentication
   if (
-    pathname.startsWith("/_next/") ||      // next-internal JS/CSS/images
-    pathname.startsWith("/api/")   ||      // your API routes
-    pathname.match(/\.[^\/]+$/)             // any “.ext” at end (jpg, mp4, css…)
+    pathname === "/" || 
+    pathname === "/fpv-drone-iceland.mp4" || 
+    pathname === "/admin/login"
   ) {
     return NextResponse.next()
   }
-
-  // 2) Only your homepage is guarded
-  if (pathname !== "/") {
-    return NextResponse.redirect(new URL("/", request.url))
+  
+  // Check for admin authentication in browser storage
+  // Note: This is a client-side check, we need to implement a server-side version
+  // of this check by using a cookie instead
+  const adminCookie = request.cookies.get("adminAuthenticated")
+  
+  // If the admin cookie is present, allow access to all parts of the site
+  if (adminCookie && adminCookie.value === "true") {
+    return NextResponse.next()
   }
-
-  return NextResponse.next()
+  
+  // Otherwise, redirect to home page
+  return NextResponse.redirect(new URL("/", request.url))
 }
 
-// apply to every path
 export const config = {
-  matcher: "/:path*",
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!_next/static|_next/image|favicon.ico).*)",
+  ],
 }

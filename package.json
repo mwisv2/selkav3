@@ -1,5 +1,5 @@
 {
-  "name": "selka",
+  "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -58,9 +58,7 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
-    "@emotion/is-prop-valid": "latest",
-    "firebase": "latest",
-    "framer-motion": "latest"
+    "firebase": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

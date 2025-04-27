@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { Calendar, Info } from "lucide-react"
+import { Calendar, Info, Check } from "lucide-react"
 import { syncUserData } from "@/lib/dataSync"
 
 export default function Step3() {
   const router = useRouter()
   const [daysPerWeek, setDaysPerWeek] = useState<number | null>(null)
+  const [selectedDays, setSelectedDays] = useState<string[]>([])
   const [isSaving, setIsSaving] = useState(false)
 
   // Load saved data when component mounts
@@ -20,10 +21,35 @@ export default function Step3() {
       if (userProfile.daysPerWeek) {
         setDaysPerWeek(Number.parseInt(userProfile.daysPerWeek))
       }
+
+      // Load previously selected days if available
+      if (userProfile.workoutDays && Array.isArray(userProfile.workoutDays)) {
+        setSelectedDays(userProfile.workoutDays)
+      }
     } catch (error) {
       console.error("Error loading saved data:", error)
     }
   }, [])
+
+  // Update max selectable days when daysPerWeek changes
+  useEffect(() => {
+    if (daysPerWeek !== null) {
+      // Limit selected days to the new maximum
+      if (selectedDays.length > daysPerWeek) {
+        setSelectedDays(selectedDays.slice(0, daysPerWeek))
+      }
+    }
+  }, [daysPerWeek])
+
+  const toggleDay = (day: string) => {
+    if (selectedDays.includes(day)) {
+      setSelectedDays(selectedDays.filter((d) => d !== day))
+    } else {
+      if (daysPerWeek !== null && selectedDays.length < daysPerWeek) {
+        setSelectedDays([...selectedDays, day])
+      }
+    }
+  }
 
   const handleNext = async () => {
     if (daysPerWeek === null) return
@@ -35,6 +61,7 @@ export default function Step3() {
       const updatedProfile = {
         ...userProfile,
         daysPerWeek,
+        workoutDays: selectedDays,
       }
 
       localStorage.setItem("userProfile", JSON.stringify(updatedProfile))
@@ -58,12 +85,8 @@ export default function Step3() {
         workoutData: updatedWorkoutData,
       })}; path=/; max-age=31536000`
 
-      // If 4 days or less, go to step-3b to select specific days
-      if (daysPerWeek <= 4) {
-        router.push("/onboarding/step-3b")
-      } else {
-        router.push("/onboarding/step-4")
-      }
+      // Go to step-4
+      router.push("/onboarding/step-4")
     } catch (error) {
       console.error("Error saving data:", error)
     } finally {
@@ -72,15 +95,17 @@ export default function Step3() {
   }
 
   // Calculate the total number of steps
-  const totalSteps = 13
+  const totalSteps = 12
   const currentStep = 3
   const progressPercentage = (currentStep / totalSteps) * 100
+
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
   return (
     <Card className="w-full">
       <CardHeader className="space-y-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-2xl">Workout Frequency</CardTitle>
+          <CardTitle className="text-2xl">Workout Schedule</CardTitle>
           <Calendar className="h-8 w-8 text-primary" />
         </div>
         <CardDescription>How many days per week would you like to work out?</CardDescription>
@@ -110,24 +135,46 @@ export default function Step3() {
           ))}
         </div>
 
-        <div className="rounded-lg border p-4 bg-muted/50">
-          <div className="flex items-start space-x-3">
-            <Info className="h-5 w-5 text-primary mt-0.5" />
-            <div className="space-y-1">
-              <h4 className="text-sm font-medium">Recommendation</h4>
-              <p className="text-xs text-muted-foreground">
-                For beginners, we recommend 3-4 days per week with rest days in between. For intermediate or advanced
-                fitness levels, 4-6 days may be appropriate.
-              </p>
+        {daysPerWeek !== null && (
+          <>
+            <div className="rounded-lg border p-4 bg-muted/50">
+              <div className="flex items-start space-x-3">
+                <Info className="h-5 w-5 text-primary mt-0.5" />
+                <div className="space-y-1">
+                  <h4 className="text-sm font-medium">Select your workout days</h4>
+                  <p className="text-xs text-muted-foreground">
+                    Choose which {daysPerWeek} days of the week you want to work out. We recommend spacing your workout
+                    days throughout the week for optimal recovery.
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+
+            <div className="grid gap-3">
+              {days.map((day) => (
+                <button
+                  key={day}
+                  className={`p-4 rounded-lg border flex items-center justify-between transition-all ${
+                    selectedDays.includes(day)
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border hover:border-primary/50"
+                  }`}
+                  onClick={() => toggleDay(day)}
+                  disabled={!selectedDays.includes(day) && selectedDays.length >= (daysPerWeek || 0)}
+                >
+                  <span className="text-md font-medium">{day}</span>
+                  {selectedDays.includes(day) && <Check className="h-5 w-5" />}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline" onClick={() => router.push("/onboarding/step-2")}>
           Back
         </Button>
-        <Button onClick={handleNext} disabled={daysPerWeek === null || isSaving}>
+        <Button onClick={handleNext} disabled={daysPerWeek === null || selectedDays.length !== daysPerWeek || isSaving}>
           {isSaving ? (
             <>
               <span className="mr-2">Saving...</span>
