@@ -21,21 +21,14 @@ export default function Home() {
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="relative w-full h-full">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            poster="/fallback-image.jpg" // Fallback image for mobile or slow loading
+          <iframe
             className="absolute w-full h-full object-cover"
-          >
-            {/* Multiple video formats for better compatibility */}
-            <source src="/fpv-drone-iceland.mp4" type="video/mp4" />
-            <source src="/fpv-drone-iceland.webm" type="video/webm" />
-            <source src="/fpv-drone-iceland.ogv" type="video/ogg" />
-            Your browser does not support the video tag.
-          </video>
+            src="https://www.youtube.com/embed/kcfs1-ryKWE?autoplay=1&mute=1&loop=1&playlist=kcfs1-ryKWE" // YouTube video with autoplay, mute, and loop
+            title="FPV Drone Iceland"
+            frameBorder="0"
+            allow="autoplay; fullscreen"
+            allowFullScreen
+          />
         </div>
         <div className="absolute inset-0 bg-black/70 z-10" />
       </div>
