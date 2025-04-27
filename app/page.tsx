@@ -21,9 +21,10 @@ export default function Home() {
     <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="relative w-full h-full">
+          {/* YouTube iframe with hidden controls and branding */}
           <iframe
             className="absolute w-full h-full object-cover"
-            src="https://www.youtube.com/embed/kcfs1-ryKWE?autoplay=1&mute=1&loop=1&playlist=kcfs1-ryKWE&controls=0&modestbranding=1&rel=0"
+            src="https://www.youtube.com/embed/kcfs1-ryKWE?autoplay=1&mute=1&loop=1&playlist=kcfs1-ryKWE&controls=0&modestbranding=1&rel=0&fs=0&iv_load_policy=3"
             title="FPV Drone Iceland"
             frameBorder="0"
             allow="autoplay; fullscreen"
