@@ -4,12 +4,14 @@ import type { NextRequest } from "next/server"
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   
-  // Allow access to specified paths without authentication
+  // Allow access to specified paths including video formats
   if (
     pathname === "/" || 
-    pathname === "/fpv-drone-iceland.mp4" || 
-    pathname === "/admin" ||
-    pathname === "/api/admin-login"
+    pathname === "/admin" || 
+    pathname === "/api/admin-login" ||
+    pathname.endsWith(".mp4") || // Allow .mp4 files
+    pathname.endsWith(".ogg") || // Allow .ogg files
+    pathname.endsWith(".webm") // Allow .webm files (optional, if you want to support this format)
   ) {
     return NextResponse.next()
   }
