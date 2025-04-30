@@ -63,7 +63,7 @@ export default function Step6() {
       })}; path=/; max-age=31536000`
 
       // Skip step-7 and go directly to step-8
-      router.push("/onboarding/step-8")
+      router.push("/onboarding/step-7")
     } catch (error) {
       console.error("Error saving data:", error)
     } finally {
