@@ -56,8 +56,8 @@ export default function Home() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-center"
         >
-          <h1 className="text-5xl sm:text-6xl font-bold mb-4 text-white">Selka</h1>
-          <p className="text-xl text-gray-300 mb-2">Your AI powered fitness journey</p>
+          <h1 className="text-5xl sm:text-6xl font-bold mb-4 text-white">Purely You</h1>
+          <p className="text-xl text-gray-300 mb-2">ts for u max</p>
           
           {/* Lock status message */}
           <motion.div
